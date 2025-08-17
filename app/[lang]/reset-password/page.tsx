@@ -1,10 +1,11 @@
 'use client';
-import { useState } from 'react';
+
+import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { dict, Lang } from '@/lib/dictionaries';
 
-export default function ResetPassword({ params }: { params: { lang: Lang } }) {
+function ResetPasswordInner({ params }: { params: { lang: Lang } }) {
   const t = dict[params.lang];
   const searchParams = useSearchParams();
   const access_token = searchParams.get('access_token');
@@ -14,14 +15,28 @@ export default function ResetPassword({ params }: { params: { lang: Lang } }) {
   const [err, setErr] = useState<string | null>(null);
 
   const handleReset = async () => {
-    setMsg(null); setErr(null);
-    if (!access_token) return setErr(params.lang === 'fr' ? "Lien invalide." : "Invalid link.");
-    if (pw.length < 8) return setErr(params.lang === 'fr' ? "Mot de passe trop court (8+)" : "Password too short (8+)");
-    if (pw !== pw2) return setErr(params.lang === 'fr' ? "Les mots de passe diffèrent" : "Passwords do not match");
+    setMsg(null);
+    setErr(null);
+
+    if (!access_token) {
+      return setErr(params.lang === 'fr' ? "Lien invalide." : "Invalid link.");
+    }
+    if (pw.length < 8) {
+      return setErr(params.lang === 'fr' ? "Mot de passe trop court (8+)" : "Password too short (8+)");
+    }
+    if (pw !== pw2) {
+      return setErr(params.lang === 'fr' ? "Les mots de passe diffèrent" : "Passwords do not match");
+    }
 
     const { error } = await supabase.auth.updateUser({ password: pw });
     if (error) setErr(error.message);
-    else setMsg(params.lang === 'fr' ? "✔ Mot de passe changé avec succès. Tu peux maintenant te reconnecter." : "✔ Password updated successfully. You can now log in.");
+    else {
+      setMsg(
+        params.lang === 'fr'
+          ? "✔ Mot de passe changé avec succès. Tu peux maintenant te reconnecter."
+          : "✔ Password updated successfully. You can now log in."
+      );
+    }
   };
 
   return (
@@ -54,5 +69,13 @@ export default function ResetPassword({ params }: { params: { lang: Lang } }) {
       {msg && <div className="text-green-500 text-sm">{msg}</div>}
       {err && <div className="text-red-500 text-sm">{err}</div>}
     </div>
+  );
+}
+
+export default function ResetPasswordPage(props: { params: { lang: Lang } }) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordInner {...props} />
+    </Suspense>
   );
 }
