@@ -1,5 +1,5 @@
 "use client";
-import { useState, ReactElement } from "react";
+import { useState } from "react";
 import {
   CheckCircleIcon,
   HomeIcon,
@@ -41,6 +41,11 @@ export default function ChecklistPage() {
     ]
   });
 
+  // Calculate stats based on the current state of tasks
+  const totalTasks = Object.values(tasks).flat().length;
+  const completedTasks = Object.values(tasks).flat().filter(task => task.done).length;
+  const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
   const toggleTask = (category: Category, index: number) => {
     setTasks(prev => ({
       ...prev,
@@ -50,10 +55,9 @@ export default function ChecklistPage() {
     }));
   };
 
-
   const resetTasks = () => {
     setTasks(prev => {
-      const copy = {} as TaskState;
+      const copy = {} as TasksState;
       for (const [cat, list] of Object.entries(prev) as [Category, Task[]][]) {
         copy[cat] = list.map(task => ({ ...task, done: false }));
       }
@@ -63,7 +67,7 @@ export default function ChecklistPage() {
 
   const checkAll = () => {
     setTasks(prev => {
-      const copy = {} as TaskState;
+      const copy = {} as TasksState;
       for (const [cat, list] of Object.entries(prev) as [Category, Task[]][]) {
         copy[cat] = list.map(task => ({ ...task, done: true }));
       }
@@ -72,17 +76,17 @@ export default function ChecklistPage() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-black text-white px-4 py-12">
-      <div className="max-w-3xl w-full bg-gray-900 p-10 rounded-xl shadow-xl">
+    <main className="flex flex-col items-center justify-center min-h-screen bg-beige text-noir px-4 py-12">
+      <div className="max-w-3xl w-full bg-white p-10 rounded-xl shadow-xl">
         {/* Titre + intro */}
         <h1 className="text-4xl font-bold mb-2 text-center">Ma Checklist Étudiant ✈️</h1>
-        <p className="text-gray-400 mb-8 text-center">
+        <p className="text-noir/70 mb-8 text-center">
           Garde le cap ! Cette checklist regroupe toutes les étapes clés pour bien t’installer dans ta nouvelle ville.
         </p>
 
         {/* Progression */}
         <div className="mb-8 text-center">
-          <span className="inline-block mb-3 px-4 py-1 rounded-full text-sm font-semibold bg-green-600/20 text-green-400">
+          <span className="inline-block mb-3 px-4 py-1 rounded-full text-sm font-semibold bg-marine/20 text-marine">
             {completedTasks === totalTasks
               ? "Checklist complétée 🎉"
               : completedTasks > totalTasks / 2
@@ -90,9 +94,9 @@ export default function ChecklistPage() {
               : "Courage, tu avances 💪"}
           </span>
           <p className="mb-2">{completedTasks}/{totalTasks} tâches complétées</p>
-          <div className="w-full bg-gray-700 h-3 rounded-full overflow-hidden">
+          <div className="w-full bg-noir/10 h-3 rounded-full overflow-hidden">
             <div
-              className="bg-green-500 h-3 transition-all"
+              className="bg-marine h-3 transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -102,13 +106,13 @@ export default function ChecklistPage() {
         <div className="flex justify-center gap-4 mb-8">
           <button
             onClick={checkAll}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-medium transition"
+            className="px-4 py-2 bg-marine hover:bg-marine-light rounded-lg text-white text-sm font-medium transition"
           >
             Tout cocher
           </button>
           <button
             onClick={resetTasks}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-medium transition"
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white text-sm font-medium transition"
           >
             Réinitialiser
           </button>
@@ -118,7 +122,7 @@ export default function ChecklistPage() {
         {Object.entries(tasks).map(([category, list]) => (
           <div key={category} className="mb-8">
             <h2 className="text-2xl font-semibold mb-2 capitalize">{category}</h2>
-            <p className="text-gray-400 mb-4 text-sm">
+            <p className="text-noir/70 mb-4 text-sm">
               {category === "logement" &&
                 "Un bon logement, c’est la base de ton confort au quotidien."}
               {category === "administratif" &&
@@ -133,14 +137,14 @@ export default function ChecklistPage() {
                   onClick={() => toggleTask(category as Category, i)}
                   className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${
                     task.done
-                      ? "bg-green-200 text-black line-through"
-                      : "bg-gray-800 hover:bg-gray-700"
+                      ? "bg-marine/20 text-noir line-through"
+                      : "bg-beige hover:bg-beige-light shadow-sm border border-noir/10"
                   }`}
                 >
-                  <span className="text-green-400">{task.icon}</span>
+                  <span className="text-marine">{task.icon}</span>
                   <span>{task.text}</span>
                   {task.done && (
-                    <CheckCircleIcon className="h-5 w-5 text-green-600 ml-auto" />
+                    <CheckCircleIcon className="h-5 w-5 text-marine ml-auto" />
                   )}
                 </li>
               ))}
