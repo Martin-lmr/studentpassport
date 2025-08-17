@@ -11,7 +11,7 @@ import {
   ShieldCheckIcon
 } from "@heroicons/react/24/solid";
 
-// 1. Définir le type des catégories
+// Define the types
 type Category = "logement" | "administratif" | "quotidien";
 
 type Task = {
