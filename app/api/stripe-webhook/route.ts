@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { createClient } from "@supabase/supabase-js";
 
-export const dynamic = "force-dynamic"; // 🚀 à la place de config
+
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -55,3 +55,5 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ received: true });
 }
+
+export const dynamic = "force-dynamic";
