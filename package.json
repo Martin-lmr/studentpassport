@@ -9,23 +9,44 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.0",
+    "@heroicons/react": "^2.2.0",
     "@stripe/stripe-js": "^7.8.0",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.45.0",
     "clsx": "^2.1.1",
+    "lucide-react": "^0.539.0",
+    "moment-timezone": "^0.6.0",
     "next": "^14.2.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "stripe": "^16.6.0"
+    "stripe": "^16.6.0",
+    "swr": "^2.3.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.9",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "autoprefixer": "^10.4.19",
+    "autoprefixer": "^10.4.21",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.5",
-    "postcss": "^8.4.39",
-    "tailwindcss": "^3.4.7",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.5.4"
-  }
+  },
+  "description": "Website designed by students, for students relocating in a new city.",
+  "main": "next.config.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Martin-lmr/studentpassport.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Martin-lmr/studentpassport/issues"
+  },
+  "homepage": "https://github.com/Martin-lmr/studentpassport#readme"
 }
