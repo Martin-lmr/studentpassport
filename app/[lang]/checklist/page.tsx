@@ -57,21 +57,21 @@ export default function ChecklistPage() {
 
   const resetTasks = () => {
     setTasks(prev => {
-      const copy = {} as TasksState;
-      for (const [cat, list] of Object.entries(prev) as [Category, Task[]][]) {
-        copy[cat] = list.map(task => ({ ...task, done: false }));
-      }
-      return copy;
+      const newTasks = {} as TasksState;
+      (Object.keys(prev) as Category[]).forEach(category => {
+        newTasks[category] = prev[category].map(task => ({ ...task, done: false }));
+      });
+      return newTasks;
     });
   };
 
   const checkAll = () => {
     setTasks(prev => {
-      const copy = {} as TasksState;
-      for (const [cat, list] of Object.entries(prev) as [Category, Task[]][]) {
-        copy[cat] = list.map(task => ({ ...task, done: true }));
-      }
-      return copy;
+      const newTasks = {} as TasksState;
+      (Object.keys(prev) as Category[]).forEach(category => {
+        newTasks[category] = prev[category].map(task => ({ ...task, done: true }));
+      });
+      return newTasks;
     });
   };
 
@@ -119,38 +119,41 @@ export default function ChecklistPage() {
         </div>
 
         {/* Liste des catégories */}
-        {Object.entries(tasks).map(([category, list]) => (
-          <div key={category} className="mb-8">
-            <h2 className="text-2xl font-semibold mb-2 capitalize">{category}</h2>
-            <p className="text-noir/70 mb-4 text-sm">
-              {category === "logement" &&
-                "Un bon logement, c’est la base de ton confort au quotidien."}
-              {category === "administratif" &&
-                "Ces démarches te permettent d’être en règle et d’éviter les mauvaises surprises."}
-              {category === "quotidien" &&
-                "Ces petits détails font toute la différence pour t’intégrer rapidement."}
-            </p>
-            <ul className="space-y-3">
-              {list.map((task, i) => (
-                <li
-                  key={i}
-                  onClick={() => toggleTask(category as Category, i)}
-                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${
-                    task.done
-                      ? "bg-marine/20 text-noir line-through"
-                      : "bg-beige hover:bg-beige-light shadow-sm border border-noir/10"
-                  }`}
-                >
-                  <span className="text-marine">{task.icon}</span>
-                  <span>{task.text}</span>
-                  {task.done && (
-                    <CheckCircleIcon className="h-5 w-5 text-marine ml-auto" />
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        {(Object.keys(tasks) as Category[]).map(category => {
+          const list = tasks[category];
+          return (
+            <div key={category} className="mb-8">
+              <h2 className="text-2xl font-semibold mb-2 capitalize">{category}</h2>
+              <p className="text-noir/70 mb-4 text-sm">
+                {category === "logement" &&
+                  "Un bon logement, c’est la base de ton confort au quotidien."}
+                {category === "administratif" &&
+                  "Ces démarches te permettent d’être en règle et d’éviter les mauvaises surprises."}
+                {category === "quotidien" &&
+                  "Ces petits détails font toute la différence pour t’intégrer rapidement."}
+              </p>
+              <ul className="space-y-3">
+                {list.map((task, i) => (
+                  <li
+                    key={i}
+                    onClick={() => toggleTask(category, i)}
+                    className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${
+                      task.done
+                        ? "bg-marine/20 text-noir line-through"
+                        : "bg-beige hover:bg-beige-light shadow-sm border border-noir/10"
+                    }`}
+                  >
+                    <span className="text-marine">{task.icon}</span>
+                    <span>{task.text}</span>
+                    {task.done && (
+                      <CheckCircleIcon className="h-5 w-5 text-marine ml-auto" />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
       </div>
     </main>
   );
