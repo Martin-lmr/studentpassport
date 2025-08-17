@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, ReactElement } from "react";
 import {
   CheckCircleIcon,
   HomeIcon,
@@ -11,8 +11,21 @@ import {
   ShieldCheckIcon
 } from "@heroicons/react/24/solid";
 
+// 1. Définir le type des catégories
+type Category = "logement" | "administratif" | "quotidien";
+
+// 2. Définir le type d'une tâche
+interface Task {
+  text: string;
+  done: boolean;
+  icon: ReactElement;
+}
+
+// 3. Définir le type global
+type TaskState = Record<Category, Task[]>;
+
 export default function ChecklistPage() {
-  const [tasks, setTasks] = useState({
+  const [tasks, setTasks] = useState<TaskState>({
     logement: [
       { text: "Trouver un logement", done: false, icon: <HomeIcon className="h-5 w-5" /> },
       { text: "Signer le bail", done: false, icon: <ClipboardIcon className="h-5 w-5" /> },
@@ -34,7 +47,7 @@ export default function ChecklistPage() {
   const completedTasks = Object.values(tasks).flat().filter(t => t.done).length;
   const progress = (completedTasks / totalTasks) * 100;
 
-  const toggleTask = (category: string, index: number) => {
+  const toggleTask = (category: Category, index: number) => {
     setTasks(prev => ({
       ...prev,
       [category]: prev[category].map((task, i) =>
@@ -45,8 +58,8 @@ export default function ChecklistPage() {
 
   const resetTasks = () => {
     setTasks(prev => {
-      const copy: any = {};
-      for (const [cat, list] of Object.entries(prev)) {
+      const copy = {} as TaskState;
+      for (const [cat, list] of Object.entries(prev) as [Category, Task[]][]) {
         copy[cat] = list.map(task => ({ ...task, done: false }));
       }
       return copy;
@@ -55,8 +68,8 @@ export default function ChecklistPage() {
 
   const checkAll = () => {
     setTasks(prev => {
-      const copy: any = {};
-      for (const [cat, list] of Object.entries(prev)) {
+      const copy = {} as TaskState;
+      for (const [cat, list] of Object.entries(prev) as [Category, Task[]][]) {
         copy[cat] = list.map(task => ({ ...task, done: true }));
       }
       return copy;
@@ -66,7 +79,6 @@ export default function ChecklistPage() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-black text-white px-4 py-12">
       <div className="max-w-3xl w-full bg-gray-900 p-10 rounded-xl shadow-xl">
-        
         {/* Titre + intro */}
         <h1 className="text-4xl font-bold mb-2 text-center">Ma Checklist Étudiant ✈️</h1>
         <p className="text-gray-400 mb-8 text-center">
@@ -123,7 +135,7 @@ export default function ChecklistPage() {
               {list.map((task, i) => (
                 <li
                   key={i}
-                  onClick={() => toggleTask(category, i)}
+                  onClick={() => toggleTask(category as Category, i)}
                   className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${
                     task.done
                       ? "bg-green-200 text-black line-through"
