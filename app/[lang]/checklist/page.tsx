@@ -44,13 +44,16 @@ export default function ChecklistPage() {
   const completedTasks = Object.values(tasks).flat().filter(t => t.done).length;
   const progress = (completedTasks / totalTasks) * 100;
 
+  // ✅ Correction ici
   const toggleTask = (category: Category, index: number) => {
-    setTasks(prev => ({
-      ...prev,
-      [category]: prev[category].map((task, i) =>
-        i === index ? { ...task, done: !task.done } : task
-      ),
-    }));
+    setTasks((prev: TasksState) => {
+      return {
+        ...prev,
+        [category]: prev[category].map((task, i) =>
+          i === index ? { ...task, done: !task.done } : task
+        ),
+      };
+    });
   };
 
   const resetTasks = () => {
