@@ -1,0 +1,8 @@
+{
+  "/page": "app/page.js",
+  "/[lang]/destinations/page": "app/[lang]/destinations/page.js",
+  "/[lang]/page": "app/[lang]/page.js",
+  "/[lang]/destinations/[continent]/page": "app/[lang]/destinations/[continent]/page.js",
+  "/[lang]/destinations/[continent]/[country]/page": "app/[lang]/destinations/[continent]/[country]/page.js",
+  "/[lang]/destinations/[continent]/[country]/[city]/page": "app/[lang]/destinations/[continent]/[country]/[city]/page.js"
+}
