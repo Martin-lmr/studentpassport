@@ -1,66 +1,146 @@
-'use client';
-import Protected from '@/components/Protected';
-import { useEffect, useMemo, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { Lang } from '@/lib/dictionaries';
+"use client";
+import { useState } from "react";
+import {
+  CheckCircleIcon,
+  HomeIcon,
+  ClipboardIcon,
+  UserGroupIcon,
+  BanknotesIcon,
+  PhoneIcon,
+  BuildingOfficeIcon,
+  ShieldCheckIcon
+} from "@heroicons/react/24/solid";
 
-type Item = { id: string; label: string; done: boolean };
+export default function ChecklistPage() {
+  const [tasks, setTasks] = useState({
+    logement: [
+      { text: "Trouver un logement", done: false, icon: <HomeIcon className="h-5 w-5" /> },
+      { text: "Signer le bail", done: false, icon: <ClipboardIcon className="h-5 w-5" /> },
+      { text: "Souscrire à l'assurance habitation", done: false, icon: <ShieldCheckIcon className="h-5 w-5" /> }
+    ],
+    administratif: [
+      { text: "Ouvrir un compte bancaire", done: false, icon: <BanknotesIcon className="h-5 w-5" /> },
+      { text: "Demander la carte de transport étudiant", done: false, icon: <ClipboardIcon className="h-5 w-5" /> },
+      { text: "Vérifier l'assurance santé", done: false, icon: <ShieldCheckIcon className="h-5 w-5" /> }
+    ],
+    quotidien: [
+      { text: "Acheter une carte SIM locale", done: false, icon: <PhoneIcon className="h-5 w-5" /> },
+      { text: "Repérer les supermarchés", done: false, icon: <BuildingOfficeIcon className="h-5 w-5" /> },
+      { text: "Rejoindre un groupe étudiant", done: false, icon: <UserGroupIcon className="h-5 w-5" /> }
+    ]
+  });
 
-const defaultItems = (lang: Lang): Item[] => [
-  { id: 'housing', label: lang==='fr'?'Trouver un logement':'Find housing', done: false },
-  { id: 'bank', label: lang==='fr'?'Ouvrir un compte bancaire':'Open a bank account', done: false },
-  { id: 'sim', label: lang==='fr'?'Prendre une eSIM/SIM':'Get an eSIM/SIM', done: false },
-  { id: 'transport', label: lang==='fr'?'Souscrire un titre de transport':'Get a transport pass', done: false },
-  { id: 'insurance', label: lang==='fr'?'Assurance habitation / santé':'Home/health insurance', done: false },
-  { id: 'docs', label: lang==='fr'?'Documents administratifs':'Admin documents', done: false },
-];
+  const totalTasks = Object.values(tasks).flat().length;
+  const completedTasks = Object.values(tasks).flat().filter(t => t.done).length;
+  const progress = (completedTasks / totalTasks) * 100;
 
-export default function Checklist({ params }: { params: { lang: Lang } }) {
-  const lang = params.lang;
-  const [email, setEmail] = useState<string>('');
-  const storageKey = useMemo(()=>`sp_checklist_${email||'guest'}_${lang}`, [email, lang]);
-  const [items, setItems] = useState<Item[]>(defaultItems(lang));
+  const toggleTask = (category: string, index: number) => {
+    setTasks(prev => ({
+      ...prev,
+      [category]: prev[category].map((task, i) =>
+        i === index ? { ...task, done: !task.done } : task
+      )
+    }));
+  };
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setEmail(data.session?.user.email ?? ''));
-  }, []);
+  const resetTasks = () => {
+    setTasks(prev => {
+      const copy: any = {};
+      for (const [cat, list] of Object.entries(prev)) {
+        copy[cat] = list.map(task => ({ ...task, done: false }));
+      }
+      return copy;
+    });
+  };
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (raw) setItems(JSON.parse(raw));
-      else setItems(defaultItems(lang));
-    } catch {}
-  }, [storageKey, lang]);
-
-  useEffect(() => {
-    try { localStorage.setItem(storageKey, JSON.stringify(items)); } catch {}
-  }, [items, storageKey]);
-
-  const toggle = (id: string) => setItems(prev => prev.map(it => it.id===id?{...it, done:!it.done}:it));
-  const addItem = (label: string) => setItems(prev => [...prev, { id: String(Date.now()), label, done:false }]);
-
-  const [newItem, setNewItem] = useState('');
+  const checkAll = () => {
+    setTasks(prev => {
+      const copy: any = {};
+      for (const [cat, list] of Object.entries(prev)) {
+        copy[cat] = list.map(task => ({ ...task, done: true }));
+      }
+      return copy;
+    });
+  };
 
   return (
-    <Protected requireSubscription>
-      <div className="space-y-4 w-full">
-        <h1 className="text-2xl font-bold">{lang==='fr'?'Ma checklist':'My checklist'}</h1>
-        <div className="card p-4 space-y-3">
-          <div className="flex gap-2">
-            <input className="input" value={newItem} onChange={e=>setNewItem(e.target.value)} placeholder={lang==='fr'?'Ajouter une tâche':'Add a task'} />
-            <button className="btn" onClick={()=>{ if(newItem.trim()) { addItem(newItem.trim()); setNewItem(''); } }}>{lang==='fr'?'Ajouter':'Add'}</button>
+    <main className="flex flex-col items-center justify-center min-h-screen bg-black text-white px-4 py-12">
+      <div className="max-w-3xl w-full bg-gray-900 p-10 rounded-xl shadow-xl">
+        
+        {/* Titre + intro */}
+        <h1 className="text-4xl font-bold mb-2 text-center">Ma Checklist Étudiant ✈️</h1>
+        <p className="text-gray-400 mb-8 text-center">
+          Garde le cap ! Cette checklist regroupe toutes les étapes clés pour bien t’installer dans ta nouvelle ville.
+        </p>
+
+        {/* Progression */}
+        <div className="mb-8 text-center">
+          <span className="inline-block mb-3 px-4 py-1 rounded-full text-sm font-semibold bg-green-600/20 text-green-400">
+            {completedTasks === totalTasks
+              ? "Checklist complétée 🎉"
+              : completedTasks > totalTasks / 2
+              ? "En bonne voie 🚀"
+              : "Courage, tu avances 💪"}
+          </span>
+          <p className="mb-2">{completedTasks}/{totalTasks} tâches complétées</p>
+          <div className="w-full bg-gray-700 h-3 rounded-full overflow-hidden">
+            <div
+              className="bg-green-500 h-3 transition-all"
+              style={{ width: `${progress}%` }}
+            />
           </div>
-          <ul className="space-y-2">
-            {items.map(it => (
-              <li key={it.id} className="flex items-center gap-3">
-                <input type="checkbox" checked={it.done} onChange={()=>toggle(it.id)} />
-                <span className={it.done?'line-through text-neutral-400':''}>{it.label}</span>
-              </li>
-            ))}
-          </ul>
         </div>
+
+        {/* Boutons globaux */}
+        <div className="flex justify-center gap-4 mb-8">
+          <button
+            onClick={checkAll}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-medium transition"
+          >
+            Tout cocher
+          </button>
+          <button
+            onClick={resetTasks}
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-medium transition"
+          >
+            Réinitialiser
+          </button>
+        </div>
+
+        {/* Liste des catégories */}
+        {Object.entries(tasks).map(([category, list]) => (
+          <div key={category} className="mb-8">
+            <h2 className="text-2xl font-semibold mb-2 capitalize">{category}</h2>
+            <p className="text-gray-400 mb-4 text-sm">
+              {category === "logement" &&
+                "Un bon logement, c’est la base de ton confort au quotidien."}
+              {category === "administratif" &&
+                "Ces démarches te permettent d’être en règle et d’éviter les mauvaises surprises."}
+              {category === "quotidien" &&
+                "Ces petits détails font toute la différence pour t’intégrer rapidement."}
+            </p>
+            <ul className="space-y-3">
+              {list.map((task, i) => (
+                <li
+                  key={i}
+                  onClick={() => toggleTask(category, i)}
+                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${
+                    task.done
+                      ? "bg-green-200 text-black line-through"
+                      : "bg-gray-800 hover:bg-gray-700"
+                  }`}
+                >
+                  <span className="text-green-400">{task.icon}</span>
+                  <span>{task.text}</span>
+                  {task.done && (
+                    <CheckCircleIcon className="h-5 w-5 text-green-600 ml-auto" />
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
-    </Protected>
+    </main>
   );
 }

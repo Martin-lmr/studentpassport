@@ -17,7 +17,9 @@ export default function CityDetail({ params }: { params: { lang: Lang, slug: str
       <div className="grid sm:grid-cols-2 gap-4">
         <section className="card p-4">
           <h3 className="font-semibold mb-2">{params.lang === 'fr' ? 'En bref' : 'At a glance'}</h3>
-          <ul className="list-disc list-inside space-y-1 text-neutral-300">{c.quick.map((q,i) => <li key={i}>{q}</li>)}</ul>
+          <ul className="list-disc list-inside space-y-1 text-neutral-300">
+            {c.quick && c.quick.map((q, i) => <li key={i}>{q}</li>)}
+          </ul>
         </section>
         <section className="card p-4">
           <h3 className="font-semibold mb-2">{params.lang === 'fr' ? 'Budget' : 'Budget'}</h3>

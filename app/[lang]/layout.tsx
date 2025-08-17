@@ -1,6 +1,6 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Lang, dict } from '@/lib/dictionaries';
+import { Lang } from '@/lib/dictionaries';
 
 export default function LangLayout({ params, children }: { params: { lang: Lang }, children: React.ReactNode }) {
   const lang = params.lang;
@@ -8,7 +8,7 @@ export default function LangLayout({ params, children }: { params: { lang: Lang 
     <div>
       <Navbar lang={lang} />
       <main className="container py-8">{children}</main>
-      <Footer />
+      <Footer lang={lang} /> {/* ✅ on passe lang */}
     </div>
   );
 }
