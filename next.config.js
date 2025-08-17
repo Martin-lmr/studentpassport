@@ -2,9 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    serverActions: {
-      bodySizeLimit: '2mb'
-    }
+    serverActions: { bodySizeLimit: '2mb' }
+  },
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.unsplash.com' }
+    ]
   }
 };
 module.exports = nextConfig;
