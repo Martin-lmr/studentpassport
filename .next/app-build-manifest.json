@@ -21,20 +21,25 @@
       "static/chunks/main-app.js",
       "static/chunks/app/[lang]/layout.js"
     ],
-    "/[lang]/shop/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/[lang]/shop/page.js"
-    ],
     "/[lang]/pricing/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/[lang]/pricing/page.js"
     ],
-    "/[lang]/cities/[slug]/page": [
+    "/[lang]/shop/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/[lang]/cities/[slug]/page.js"
+      "static/chunks/app/[lang]/shop/page.js"
+    ],
+    "/[lang]/checklist/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/[lang]/checklist/page.js"
+    ],
+    "/[lang]/about/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/[lang]/about/page.js"
     ]
   }
 }
