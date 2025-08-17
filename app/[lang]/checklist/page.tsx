@@ -14,18 +14,16 @@ import {
 // 1. Définir le type des catégories
 type Category = "logement" | "administratif" | "quotidien";
 
-// 2. Définir le type d'une tâche
-interface Task {
+type Task = {
   text: string;
   done: boolean;
-  icon: ReactElement;
-}
+  icon: JSX.Element;
+};
 
-// 3. Définir le type global
-type TaskState = Record<Category, Task[]>;
+type TasksState = Record<Category, Task[]>;
 
 export default function ChecklistPage() {
-  const [tasks, setTasks] = useState<TaskState>({
+  const [tasks, setTasks] = useState<TasksState>({
     logement: [
       { text: "Trouver un logement", done: false, icon: <HomeIcon className="h-5 w-5" /> },
       { text: "Signer le bail", done: false, icon: <ClipboardIcon className="h-5 w-5" /> },
@@ -43,18 +41,15 @@ export default function ChecklistPage() {
     ]
   });
 
-  const totalTasks = Object.values(tasks).flat().length;
-  const completedTasks = Object.values(tasks).flat().filter(t => t.done).length;
-  const progress = (completedTasks / totalTasks) * 100;
-
   const toggleTask = (category: Category, index: number) => {
     setTasks(prev => ({
       ...prev,
       [category]: prev[category].map((task, i) =>
         i === index ? { ...task, done: !task.done } : task
-      )
+      ),
     }));
   };
+
 
   const resetTasks = () => {
     setTasks(prev => {
